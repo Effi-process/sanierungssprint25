@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server'
+import nodemailer from 'nodemailer'
 
 export async function POST(request: Request) {
   try {
@@ -21,21 +22,64 @@ export async function POST(request: Request) {
       )
     }
 
-    // Hier würde normalerweise ein E-Mail-Service wie SendGrid, Resend, oder Nodemailer verwendet
-    // Für jetzt loggen wir die Daten und senden eine erfolgreiche Antwort
-    console.log('Neue Kontaktanfrage:')
-    console.log('Name:', name)
-    console.log('E-Mail:', email)
-    console.log('Nachricht:', message)
-    console.log('Ziel-E-Mail: info@sanierungssprint25.de')
+    // Check if SMTP credentials are configured
+    if (!process.env.SMTP_HOST || !process.env.SMTP_USER || !process.env.SMTP_PASS) {
+      console.error('SMTP-Konfiguration fehlt!')
+      console.log('Neue Kontaktanfrage (E-Mail konnte nicht gesendet werden):')
+      console.log('Name:', name)
+      console.log('E-Mail:', email)
+      console.log('Nachricht:', message)
 
-    // Hier könntest du einen E-Mail-Service integrieren, z.B.:
-    // await sendEmail({
-    //   to: 'info@sanierungssprint25.de',
-    //   from: email,
-    //   subject: `Kontaktanfrage von ${name}`,
-    //   text: message
-    // })
+      return NextResponse.json(
+        {
+          message: 'Nachricht wurde empfangen. Bitte konfigurieren Sie die SMTP-Einstellungen.',
+          warning: 'E-Mail-Service nicht konfiguriert'
+        },
+        { status: 200 }
+      )
+    }
+
+    // SMTP-Transporter für Strato erstellen
+    const transporter = nodemailer.createTransport({
+      host: process.env.SMTP_HOST,
+      port: parseInt(process.env.SMTP_PORT || '465'),
+      secure: true, // SSL/TLS
+      auth: {
+        user: process.env.SMTP_USER,
+        pass: process.env.SMTP_PASS,
+      },
+    })
+
+    // E-Mail senden
+    const info = await transporter.sendMail({
+      from: `"Sanierungssprint25 Website" <${process.env.SMTP_USER}>`,
+      to: process.env.SMTP_TO || 'info@sanierungssprint25.de',
+      replyTo: email,
+      subject: `Neue Kontaktanfrage von ${name}`,
+      html: `
+        <h2>Neue Kontaktanfrage</h2>
+        <p><strong>Name:</strong> ${name}</p>
+        <p><strong>E-Mail:</strong> ${email}</p>
+        <p><strong>Nachricht:</strong></p>
+        <p>${message.replace(/\n/g, '<br>')}</p>
+        <hr>
+        <p style="color: #666; font-size: 12px;">Diese Nachricht wurde über das Kontaktformular auf sanierungssprint25.de gesendet.</p>
+      `,
+      text: `
+Neue Kontaktanfrage
+
+Name: ${name}
+E-Mail: ${email}
+
+Nachricht:
+${message}
+
+---
+Diese Nachricht wurde über das Kontaktformular auf sanierungssprint25.de gesendet.
+      `,
+    })
+
+    console.log('E-Mail erfolgreich gesendet:', info.messageId)
 
     return NextResponse.json(
       { message: 'Nachricht erfolgreich gesendet' },
@@ -44,7 +88,7 @@ export async function POST(request: Request) {
   } catch (error) {
     console.error('Fehler beim Senden der Nachricht:', error)
     return NextResponse.json(
-      { error: 'Fehler beim Senden der Nachricht' },
+      { error: 'Fehler beim Senden der Nachricht. Bitte versuchen Sie es später erneut.' },
       { status: 500 }
     )
   }

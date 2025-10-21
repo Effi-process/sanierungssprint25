@@ -700,6 +700,11 @@ export default function Home() {
                   url: "https://www.rueckbaupro.de"
                 },
                 {
+                  name: "Rümpelschmiede",
+                  role: "Entrümpelung & Entsorgung",
+                  url: "https://www.ruempel-schmiede.de"
+                },
+                {
                   name: "Kreuzer",
                   role: "Qualität | Handwerk | Vertrauen",
                   url: "https://www.kreuzer-handwerk.de"
@@ -728,11 +733,6 @@ export default function Home() {
                   name: "JANZEN",
                   role: "Dach- und Holzbau Meisterbetrieb",
                   url: "https://janzen-zimmerei.de"
-                },
-                {
-                  name: "Rümpelschmiede",
-                  role: "Entrümpelung & Entsorgung",
-                  url: "#"
                 }
               ].map((partner, i) => (
                 <motion.a
