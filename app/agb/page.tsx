@@ -31,7 +31,7 @@ export default function AGB() {
               <h2 className="text-lg font-medium mb-4 tracking-wide">§ 1 Geltungsbereich</h2>
               <p>
                 Diese Allgemeinen Geschäftsbedingungen (AGB) gelten für alle Verträge zwischen
-                Sanierungssprint25 (nachfolgend „Auftragnehmer") und dem Auftraggeber über
+                Sanierungssprint25 (nachfolgend &quot;Auftragnehmer&quot;) und dem Auftraggeber über
                 Sanierungsleistungen, insbesondere die Durchführung von Komplettsanierungen in 25 Tagen.
               </p>
               <p className="mt-4">

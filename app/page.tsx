@@ -1,6 +1,5 @@
 "use client"
 
-import { Button } from "@/components/ui/button"
 import { motion, AnimatePresence } from "framer-motion"
 import { ArrowUpRight, X } from "lucide-react"
 import { useState, useEffect } from "react"
@@ -100,17 +99,17 @@ export default function Home() {
   }
 
   // Keyboard navigation
-  const handleKeyDown = (e: KeyboardEvent) => {
-    if (!lightboxOpen) return
-    if (e.key === 'ArrowRight') nextImage()
-    if (e.key === 'ArrowLeft') prevImage()
-    if (e.key === 'Escape') closeLightbox()
-  }
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (!lightboxOpen) return
+      if (e.key === 'ArrowRight') nextImage()
+      if (e.key === 'ArrowLeft') prevImage()
+      if (e.key === 'Escape') closeLightbox()
+    }
 
-  // Add keyboard event listener
-  if (typeof window !== 'undefined') {
-    window.addEventListener('keydown', handleKeyDown as any)
-  }
+    window.addEventListener('keydown', handleKeyDown)
+    return () => window.removeEventListener('keydown', handleKeyDown)
+  }, [lightboxOpen])
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
