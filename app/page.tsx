@@ -455,7 +455,7 @@ export default function Home() {
               <div className="flex justify-between items-start mb-8">
                 <div>
                   <div className="text-xs tracking-[0.3em] uppercase text-gray-400 mb-2">[SNRG-01]</div>
-                  <h3 className="text-2xl md:text-3xl tracking-[0.1em] uppercase">25-TAGE KOMPLETTSANIERUNG</h3>
+                  <h3 className="text-3xl md:text-4xl tracking-[0.1em] uppercase">25-TAGE KOMPLETTSANIERUNG</h3>
                 </div>
                 <button className="w-10 h-10 border border-white/30 flex items-center justify-center hover:bg-white hover:text-black transition-all duration-300">
                   <ArrowUpRight className="w-5 h-5" />
