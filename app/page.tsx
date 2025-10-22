@@ -77,7 +77,31 @@ export default function Home() {
   const scrollToSection = (id: string) => {
     setMenuOpen(false)
     setTimeout(() => {
-      document.getElementById(id)?.scrollIntoView({ behavior: 'smooth' })
+      const element = document.getElementById(id)
+      if (element) {
+        const targetPosition = element.getBoundingClientRect().top + window.pageYOffset
+        const startPosition = window.pageYOffset
+        const distance = targetPosition - startPosition
+        const duration = 1500 // 1.5 Sekunden für sanftes Scrollen
+        let start: number | null = null
+
+        const animation = (currentTime: number) => {
+          if (start === null) start = currentTime
+          const timeElapsed = currentTime - start
+          const progress = Math.min(timeElapsed / duration, 1)
+
+          // Easing-Funktion für smoothes Scrollen
+          const ease = (t: number) => t < 0.5 ? 2 * t * t : -1 + (4 - 2 * t) * t
+
+          window.scrollTo(0, startPosition + distance * ease(progress))
+
+          if (timeElapsed < duration) {
+            requestAnimationFrame(animation)
+          }
+        }
+
+        requestAnimationFrame(animation)
+      }
     }, 300)
   }
 
@@ -147,7 +171,26 @@ export default function Home() {
       <nav className="fixed top-0 left-0 right-0 z-50 px-8 lg:px-12 py-6">
         <div className="flex justify-between items-center">
           <motion.button
-            onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+            onClick={() => {
+              const startPosition = window.pageYOffset
+              const duration = 1500
+              let start: number | null = null
+
+              const animation = (currentTime: number) => {
+                if (start === null) start = currentTime
+                const timeElapsed = currentTime - start
+                const progress = Math.min(timeElapsed / duration, 1)
+                const ease = (t: number) => t < 0.5 ? 2 * t * t : -1 + (4 - 2 * t) * t
+
+                window.scrollTo(0, startPosition * (1 - ease(progress)))
+
+                if (timeElapsed < duration) {
+                  requestAnimationFrame(animation)
+                }
+              }
+
+              requestAnimationFrame(animation)
+            }}
             className={`text-sm font-light tracking-[0.2em] hover:text-accent transition-colors cursor-pointer ${navDark ? 'text-black' : 'text-white'}`}
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
@@ -255,13 +298,20 @@ export default function Home() {
             exit={{ opacity: 0 }}
             transition={{ duration: 0.4 }}
           >
-            <motion.div
-              className="text-center"
-              initial={{ opacity: 0, y: 50 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: 50 }}
-              transition={{ duration: 0.5, delay: 0.1 }}
+            {/* Close Button - Top Right */}
+            <motion.button
+              onClick={() => setMenuOpen(false)}
+              className="fixed top-8 right-8 lg:top-12 lg:right-12 z-[60] w-12 h-12 flex items-center justify-center text-white hover:text-accent transition-colors group"
+              initial={{ opacity: 0, rotate: -90 }}
+              animate={{ opacity: 1, rotate: 0 }}
+              exit={{ opacity: 0, rotate: 90 }}
+              transition={{ duration: 0.3 }}
+              aria-label="Menü schließen"
             >
+              <X className="w-8 h-8 group-hover:rotate-90 transition-transform duration-300" />
+            </motion.button>
+
+            <div className="text-center">
               <nav className="space-y-8">
                 {[
                   { label: 'HOME', id: 'top' },
@@ -272,11 +322,42 @@ export default function Home() {
                 ].map((item, i) => (
                   <motion.button
                     key={item.id}
-                    onClick={() => item.id === 'top' ? (setMenuOpen(false), window.scrollTo({ top: 0, behavior: 'smooth' })) : scrollToSection(item.id)}
-                    className="block text-4xl md:text-6xl lg:text-7xl font-light tracking-[0.15em] text-white hover:text-accent transition-all duration-300 w-full"
-                    initial={{ opacity: 0, x: -50 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    transition={{ delay: 0.2 + i * 0.1 }}
+                    onClick={() => {
+                      if (item.id === 'top') {
+                        setMenuOpen(false)
+                        setTimeout(() => {
+                          const startPosition = window.pageYOffset
+                          const duration = 1500
+                          let start: number | null = null
+
+                          const animation = (currentTime: number) => {
+                            if (start === null) start = currentTime
+                            const timeElapsed = currentTime - start
+                            const progress = Math.min(timeElapsed / duration, 1)
+                            const ease = (t: number) => t < 0.5 ? 2 * t * t : -1 + (4 - 2 * t) * t
+
+                            window.scrollTo(0, startPosition * (1 - ease(progress)))
+
+                            if (timeElapsed < duration) {
+                              requestAnimationFrame(animation)
+                            }
+                          }
+
+                          requestAnimationFrame(animation)
+                        }, 300)
+                      } else {
+                        scrollToSection(item.id)
+                      }
+                    }}
+                    className="block text-3xl md:text-6xl lg:text-7xl font-light tracking-[0.1em] md:tracking-[0.15em] text-white hover:text-accent transition-all duration-300 w-full px-4"
+                    initial={{ opacity: 0, y: 50 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -30 }}
+                    transition={{
+                      delay: 0.5 + i * 0.2,
+                      duration: 1.2,
+                      ease: [0.22, 1, 0.36, 1]
+                    }}
                     whileHover={{ x: 10 }}
                   >
                     {item.label}
@@ -309,7 +390,7 @@ export default function Home() {
                   </div>
                 </div>
               </motion.div>
-            </motion.div>
+            </div>
           </motion.div>
         )}
       </AnimatePresence>
@@ -372,7 +453,7 @@ export default function Home() {
               onClick={() => scrollToSection('kontakt')}
               className="px-8 py-3 border border-white text-white text-sm tracking-[0.2em] uppercase hover:bg-white hover:text-black transition-all duration-300 cursor-pointer"
             >
-              GET IN TOUCH
+              KONTAKT AUFNEHMEN
             </button>
           </motion.div>
         </motion.div>
