@@ -358,7 +358,6 @@ export default function Home() {
                       duration: 1.2,
                       ease: [0.22, 1, 0.36, 1]
                     }}
-                    whileHover={{ x: 10 }}
                   >
                     {item.label}
                   </motion.button>
