@@ -82,7 +82,7 @@ export default function Home() {
         const targetPosition = element.getBoundingClientRect().top + window.pageYOffset
         const startPosition = window.pageYOffset
         const distance = targetPosition - startPosition
-        const duration = 1500 // 1.5 Sekunden für sanftes Scrollen
+        const duration = 2000 // 2 Sekunden für sanftes Scrollen
         let start: number | null = null
 
         const animation = (currentTime: number) => {
@@ -173,7 +173,7 @@ export default function Home() {
           <motion.button
             onClick={() => {
               const startPosition = window.pageYOffset
-              const duration = 1500
+              const duration = 2000
               let start: number | null = null
 
               const animation = (currentTime: number) => {
@@ -327,7 +327,7 @@ export default function Home() {
                         setMenuOpen(false)
                         setTimeout(() => {
                           const startPosition = window.pageYOffset
-                          const duration = 1500
+                          const duration = 2000
                           let start: number | null = null
 
                           const animation = (currentTime: number) => {
